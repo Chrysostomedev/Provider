@@ -3,7 +3,7 @@ import React, { useRef, useState, useCallback } from "react";
 import { Eye, EyeOff, Calendar,
   Bold, Italic, Underline, List, Strikethrough, 
   Palette, Highlighter, AlignLeft, AlignCenter, AlignRight, 
-  CornerDownLeft, Plus, Minus, ImagePlus, X, Upload
+  CornerDownLeft, Plus, Minus, ImagePlus, X, Upload, FileText, FilePlus
 } from "lucide-react";
 
 // Input Standard
@@ -234,6 +234,183 @@ export const ImageUpload = ({
             >
               <ImagePlus size={20} strokeWidth={2} className="text-slate-400" />
               <span className="text-[10px] font-semibold text-slate-400">Ajouter</span>
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── PDF UPLOAD ────────────────────────────────────────────────────────────────
+interface PDFFile {
+  id: string;
+  file: File;
+  size: string;
+}
+
+export const PDFUpload = ({
+  name,
+  maxPDFs = 3,
+}: {
+  name?: string;
+  maxPDFs?: number;
+}) => {
+  const [pdfs, setPdfs] = useState<PDFFile[]>([]);
+  const [dragging, setDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  };
+
+  const addFiles = useCallback(
+    (files: FileList | null) => {
+      if (!files) return;
+      const incoming = Array.from(files)
+        .filter(file => file.type === 'application/pdf')
+        .slice(0, maxPDFs - pdfs.length);
+      
+      const newPDFs: PDFFile[] = incoming.map((file) => ({
+        id: Math.random().toString(36).slice(2),
+        file,
+        size: formatFileSize(file.size),
+      }));
+      setPdfs((prev) => [...prev, ...newPDFs].slice(0, maxPDFs));
+    },
+    [pdfs.length, maxPDFs]
+  );
+
+  const remove = (id: string) => {
+    setPdfs((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    addFiles(e.dataTransfer.files);
+  };
+
+  const canAdd = pdfs.length < maxPDFs;
+
+  return (
+    <div className="flex flex-col gap-3 w-full">
+      {/* Drop zone — hidden when full */}
+      {canAdd && (
+        <div
+          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={onDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className={`
+            relative flex flex-col items-center justify-center gap-3 w-full
+            min-h-[140px] rounded-3xl cursor-pointer select-none
+            transition-all duration-200
+            ${dragging
+              ? "bg-slate-900 ring-2 ring-slate-900 ring-offset-2"
+              : "bg-slate-50 hover:bg-slate-100"
+            }
+          `}
+        >
+          <div className={`
+            flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-200
+            ${dragging ? "bg-white/20" : "bg-white shadow-sm"}
+          `}>
+            <Upload
+              size={22}
+              className={dragging ? "text-white" : "text-slate-500"}
+              strokeWidth={2}
+            />
+          </div>
+          <div className="text-center">
+            <p className={`text-sm font-semibold transition-colors duration-200 ${dragging ? "text-white" : "text-slate-700"}`}>
+              {dragging ? "Déposez ici" : "Glissez vos PDFs"}
+            </p>
+            <p className={`text-xs mt-0.5 transition-colors duration-200 ${dragging ? "text-white/70" : "text-slate-400"}`}>
+              ou cliquez pour parcourir · {pdfs.length}/{maxPDFs} fichier{maxPDFs > 1 ? "s" : ""}
+            </p>
+          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/pdf,.pdf"
+            multiple={maxPDFs > 1}
+            className="hidden"
+            onChange={(e) => addFiles(e.target.files)}
+            name={name}
+          />
+        </div>
+      )}
+
+      {/* Preview list */}
+      {pdfs.length > 0 && (
+        <div className="flex flex-col gap-3">
+          {pdfs.map((pdf, i) => (
+            <div
+              key={pdf.id}
+              className="group relative rounded-2xl bg-slate-50 hover:bg-slate-100 transition-all duration-200"
+              style={{ animationDelay: `${i * 60}ms` }}
+            >
+              <div className="flex items-center gap-4 p-4">
+                {/* PDF Icon */}
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:shadow transition-all duration-200">
+                  <FileText size={22} strokeWidth={2} className="text-red-500" />
+                </div>
+
+                {/* File info */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-slate-900 truncate">
+                    {pdf.file.name}
+                  </p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-xs text-slate-500">{pdf.size}</span>
+                    <span className="text-xs text-slate-300">•</span>
+                    <span className="text-xs text-slate-400">PDF</span>
+                  </div>
+                </div>
+
+                {/* Index badge */}
+                <div className="flex-shrink-0 w-6 h-6 rounded-lg bg-slate-200 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity duration-200">
+                  <span className="text-xs font-bold text-slate-600">{i + 1}</span>
+                </div>
+
+                {/* Remove button */}
+                <button
+                  type="button"
+                  onClick={() => remove(pdf.id)}
+                  className="
+                    flex-shrink-0 w-8 h-8 rounded-xl
+                    flex items-center justify-center
+                    bg-white hover:bg-red-50 shadow-sm
+                    opacity-0 group-hover:opacity-100
+                    transition-all duration-150 active:scale-90
+                  "
+                >
+                  <X size={16} strokeWidth={2.5} className="text-slate-500 group-hover:text-red-500" />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {/* Add more button */}
+          {canAdd && pdfs.length > 0 && (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="
+                rounded-2xl border-2 border-dashed border-slate-200
+                flex items-center justify-center gap-2 p-4
+                hover:border-slate-400 hover:bg-slate-50
+                transition-all duration-200 active:scale-95
+              "
+            >
+              <FilePlus size={18} strokeWidth={2} className="text-slate-400" />
+              <span className="text-sm font-semibold text-slate-500">Ajouter un PDF</span>
             </button>
           )}
         </div>

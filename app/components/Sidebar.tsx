@@ -28,11 +28,11 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { label: "Tableau de bord", icon: <LayoutDashboard size={20} />, href: "/provider/dashboard" },
   { label: "Tickets", icon: <Ticket size={20} />, href: "/provider/tickets" },
-  { label: "Planning", icon: <Calendar size={20} />, href: "#" },
-  { label: "Devis", icon: <FileSignature size={20} />, href: "#" },
+  { label: "Planning", icon: <Calendar size={20} />, href: "/provider/planning" },
+  { label: "Devis", icon: <FileSignature size={20} />, href: "/provider/devis" },
   { label: "Factures", icon: <FileText size={20} />, href: "#" },
   { label: "Rapports", icon: <ChartNoAxesColumnIncreasing size={20} />, href: "#" },
-  { label: "Notifictaions", icon: <BellDot size={20} />, href: "#" },
+  { label: "Notifictaions", icon: <BellDot size={20} />, href: "/provider/notifications" },
 
 ];
 

@@ -43,9 +43,9 @@ export interface TicketListResponse {
 
 export interface TicketStats {
   cout_moyen_par_ticket: number;
-  nombre_total_tickets: number;
-  nombre_total_tickets_en_cours: number;
-  nombre_total_tickets_clotures: number;
+  total: number;
+  en_cours: number;
+  clotures: number;
   nombre_tickets_par_mois: number;
   delais_moyen_traitement_heures: number | null;
   delais_minimal_traitement_heures: number | null;

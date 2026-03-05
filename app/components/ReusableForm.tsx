@@ -2,18 +2,37 @@
 
 import SideModal from "@/components/form/SideModal";
 import FormButton from "@/components/form/FormButton";
-import { FormField, Input, Select, PasswordInput, DateInput, RichTextEditor, ImageUpload } from "@/components/form/FormInput";
+import {
+  FormField,
+  Input,
+  Select,
+  PasswordInput,
+  DateInput,
+  RichTextEditor,
+  ImageUpload,
+  PDFUpload,
+} from "@/components/form/FormInput";
 
 export interface FieldConfig {
   name: string;
   label: string;
-  type: "text" | "password" | "date" | "select" | "email" | "number" | "rich-text" | "image-upload";
+  type:
+    | "text"
+    | "password"
+    | "date"
+    | "select"
+    | "email"
+    | "number"
+    | "rich-text"
+    | "image-upload"
+    | "pdf-upload";
   placeholder?: string;
   required?: boolean;
   gridSpan?: 1 | 2;
   options?: { label: string; value: string | number }[];
   icon?: any;
   maxImages?: number;
+  maxPDFs?: number;
   disabled?: boolean;
 }
 
@@ -45,8 +64,22 @@ export default function ReusableForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const data = new FormData(e.currentTarget);
-    const formDataObj = Object.fromEntries(data.entries());
+    const formDataObj: Record<string, any> = {};
+
+    data.forEach((value, key) => {
+      if (formDataObj[key]) {
+        if (Array.isArray(formDataObj[key])) {
+          formDataObj[key].push(value);
+        } else {
+          formDataObj[key] = [formDataObj[key], value];
+        }
+      } else {
+        formDataObj[key] = value;
+      }
+    });
+
     onSubmit(formDataObj);
   };
 
@@ -56,17 +89,35 @@ export default function ReusableForm({
 
         <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
           <div className="grid grid-cols-2 gap-x-4 gap-y-6 pb-8">
+
             {fields.map((field) => (
               <div
                 key={field.name}
-                className={field.gridSpan === 2 ? "col-span-2" : "col-span-2 md:col-span-1"}
+                className={
+                  field.gridSpan === 2
+                    ? "col-span-2"
+                    : "col-span-2 md:col-span-1"
+                }
               >
+
                 <FormField label={field.label} required={field.required}>
 
                   {field.type === "image-upload" ? (
                     <ImageUpload
                       name={field.name}
                       maxImages={field.maxImages ?? 3}
+                      onChange={(files: File[]) =>
+                        onFieldChange?.(field.name, files)
+                      }
+                    />
+
+                  ) : field.type === "pdf-upload" ? (
+                    <PDFUpload
+                      name={field.name}
+                      maxPDFs={field.maxPDFs ?? 3}
+                      onChange={(files: File[]) =>
+                        onFieldChange?.(field.name, files)
+                      }
                     />
 
                   ) : field.type === "select" ? (
@@ -80,11 +131,13 @@ export default function ReusableForm({
                       }
                     >
                       <option value="">Cliquez pour sélectionner</option>
+
                       {field.options?.map((opt, index) => (
                         <option key={`${opt.value}-${index}`} value={opt.value}>
                           {opt.label}
                         </option>
                       ))}
+
                     </Select>
 
                   ) : field.type === "rich-text" ? (
@@ -126,19 +179,32 @@ export default function ReusableForm({
                   )}
 
                 </FormField>
+
               </div>
             ))}
+
           </div>
         </div>
 
         <div className="sticky bottom-0 bg-white pt-6 pb-2 border-t border-slate-100 flex gap-4 mt-auto">
-          <FormButton type="button" variant="secondary" onClick={onClose} className="flex-1">
+          <FormButton
+            type="button"
+            variant="secondary"
+            onClick={onClose}
+            className="flex-1"
+          >
             {cancelLabel}
           </FormButton>
-          <FormButton type="submit" variant="primary" className="flex-1">
+
+          <FormButton
+            type="submit"
+            variant="primary"
+            className="flex-1"
+          >
             {submitLabel}
           </FormButton>
         </div>
+
       </form>
     </SideModal>
   );

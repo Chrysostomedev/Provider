@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
   LayoutDashboard,
@@ -30,13 +31,14 @@ const menuItems: MenuItem[] = [
   { label: "Tickets", icon: <Ticket size={20} />, href: "/provider/tickets" },
   { label: "Planning", icon: <Calendar size={20} />, href: "/provider/planning" },
   { label: "Devis", icon: <FileSignature size={20} />, href: "/provider/devis" },
-  { label: "Factures", icon: <FileText size={20} />, href: "#" },
+  { label: "Factures", icon: <FileText size={20} />, href: "/provider/factures" },
   { label: "Rapports", icon: <ChartNoAxesColumnIncreasing size={20} />, href: "#" },
-  { label: "Notifictaions", icon: <BellDot size={20} />, href: "/provider/notifications" },
-
+  { label: "Notifications", icon: <BellDot size={20} />, href: "/provider/notifications" }
 ];
 
 export default function Sidebar() {
+
+  const pathname = usePathname();
 
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -49,15 +51,28 @@ export default function Sidebar() {
     );
   };
 
+  const checkActive = (item: MenuItem) => {
+    if (!item.href) return false;
+    return pathname.startsWith(item.href);
+  };
+
   const NavItem = ({ item, depth = 0 }: { item: MenuItem; depth?: number }) => {
 
     const hasSubItems = item.subItems && item.subItems.length > 0;
     const isExpanded = expandedMenus.includes(item.label);
+    const active = checkActive(item);
 
     return (
       <div className="w-full">
 
-        <div className="flex items-center w-full rounded-xl text-gray-600 hover:bg-gray-50 transition-all duration-200">
+        <div
+          className={`flex items-center w-full rounded-xl transition-all duration-200
+          ${
+            active
+              ? "bg-black text-white shadow-md"
+              : "text-gray-600 hover:bg-gray-50"
+          }`}
+        >
 
           <Link
             href={item.href || "#"}
@@ -93,7 +108,7 @@ export default function Sidebar() {
   };
 
   const bottomItems = [
-    { label: "Paramètres", href: "#", icon: <Settings size={20} /> }
+    { label: "Paramètres", href: "/admin/parametres", icon: <Settings size={20} /> }
   ];
 
   return (

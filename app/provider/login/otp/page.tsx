@@ -149,7 +149,7 @@ export default function ProviderOtpPage() {
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="h-1 w-full bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 rounded-t-3xl" />
+        <div className="h-1 w-full bg-gradient-to-r rounded-t-3xl" />
 
         <div className="bg-white rounded-b-3xl shadow-2xl px-8 py-10">
 
@@ -159,7 +159,7 @@ export default function ProviderOtpPage() {
 
           <div className="flex justify-center mb-5">
             <div className="w-14 h-14 rounded-2xl bg-gray-900 flex items-center justify-center shadow-lg">
-              <ShieldCheck size={26} className="text-yellow-400" />
+              <ShieldCheck size={26} className="text-white" />
             </div>
           </div>
 

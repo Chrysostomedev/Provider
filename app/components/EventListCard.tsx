@@ -83,7 +83,7 @@ export default function EventListCard({
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-gray-900 flex items-center justify-center">
-            <Zap size={13} className="text-yellow-400" fill="currentColor" />
+            <Zap size={13} className="text-gray-400" fill="currentColor" />
           </div>
           <div>
             <h2 className="text-sm font-bold text-gray-900 tracking-tight">

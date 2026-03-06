@@ -68,11 +68,11 @@ api.interceptors.response.use(
           "user_id",
         ].forEach((k) => localStorage.removeItem(k));
 
-        window.location.href = "/admin/login";
+        window.location.href = "/provider/login";
 
       } else {
         // Fallback — aucune session connue
-        window.location.href = "/admin/login";
+        window.location.href = "/provider/login";
       }
     }
 

@@ -108,7 +108,7 @@ export default function Sidebar() {
   };
 
   const bottomItems = [
-    { label: "Paramètres", href: "/admin/parametres", icon: <Settings size={20} /> }
+    { label: "Paramètres", href: "#", icon: <Settings size={20} /> }
   ];
 
   return (

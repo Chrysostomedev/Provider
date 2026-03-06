@@ -7,7 +7,7 @@ import { Mail, ArrowLeft, ShieldCheck } from "lucide-react";
 import { providerAuthService, PROVIDER_DASHBOARD } from "../../../../services/ProviderAuthService";
 
 const OTP_LENGTH   = 6;
-const RESEND_DELAY = 30;
+const RESEND_DELAY = 300;
 
 export default function ProviderOtpPage() {
   const router = useRouter();

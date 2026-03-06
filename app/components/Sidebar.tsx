@@ -32,7 +32,7 @@ const menuItems: MenuItem[] = [
   { label: "Planning", icon: <Calendar size={20} />, href: "/provider/planning" },
   { label: "Devis", icon: <FileSignature size={20} />, href: "/provider/devis" },
   { label: "Factures", icon: <FileText size={20} />, href: "/provider/factures" },
-  { label: "Rapports", icon: <ChartNoAxesColumnIncreasing size={20} />, href: "#" },
+  { label: "Rapports", icon: <ChartNoAxesColumnIncreasing size={20} />, href: "/provider/rapports" },
   { label: "Notifications", icon: <BellDot size={20} />, href: "/provider/notifications" }
 ];
 

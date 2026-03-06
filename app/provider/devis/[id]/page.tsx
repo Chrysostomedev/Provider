@@ -155,7 +155,7 @@ export default function ProviderQuoteDetailPage() {
 
   // ── KPIs ───────────────────────────────────────────────────────────────────
   const kpis = [
-    { label: "Ticket",        value: quote?.ticket?.subject ?? `#${quote?.ticket_id}` ?? "—", delta: "", trend: "up" as const },
+    { label: "Ticket",        value: quote?.ticket?.subject ?? `#${quote?.ticket_id}`,  delta: "", trend: "up" as const },
     { label: "Site",          value: quote?.site?.nom ?? quote?.site?.name ?? "—",             delta: "", trend: "up" as const },
     { label: "Nb. articles",  value: quote?.items?.length ?? 0,                                delta: "", trend: "up" as const },
     { label: "Montant TTC",   value: formatCurrency(totalTTC),                                 delta: "", trend: "up" as const },

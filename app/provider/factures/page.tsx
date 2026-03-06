@@ -16,6 +16,7 @@ import {
   Eye, ArrowUpRight, Download, Filter, X,
   FileText, CheckCircle2, XCircle, Clock,
   AlertTriangle, AlertCircle, PlusCircle, Copy, Check,
+  CalendarDays,
 } from "lucide-react";
 
 import { useProviderInvoices } from "@hooks/useProviderInvoices";
@@ -327,8 +328,10 @@ export default function ProviderFacturesPage() {
     {
       name:  "comment",
       label: "Commentaire",
-      type:  "textarea",
+      type:  "textarea",gridSpan: 2,
     },
+    { name: "invoice_date", label: "Date ", type: "date", required: true, icon: CalendarDays },
+    { name: "due_date", label: "Date ", type: "date", required: true, icon: CalendarDays },
     {
       name:     "pdf_file",
       label:    "Facture PDF",

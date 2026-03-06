@@ -83,10 +83,12 @@ export const ImageUpload = ({
   name,
   maxImages = 3,
   accept = "image/*",
+  onChange,
 }: {
   name?: string;
   maxImages?: number;
   accept?: string;
+  onChange?: (files: File[]) => void; // ← AJOUTÉ
 }) => {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -101,16 +103,22 @@ export const ImageUpload = ({
         file,
         preview: URL.createObjectURL(file),
       }));
-      setImages((prev) => [...prev, ...newImages].slice(0, maxImages));
+      setImages((prev) => {
+        const updated = [...prev, ...newImages].slice(0, maxImages);
+        onChange?.(updated.map((i) => i.file)); // ← APPEL onChange
+        return updated;
+      });
     },
-    [images.length, maxImages]
+    [images.length, maxImages, onChange]
   );
 
   const remove = (id: string) => {
     setImages((prev) => {
       const img = prev.find((i) => i.id === id);
       if (img) URL.revokeObjectURL(img.preview);
-      return prev.filter((i) => i.id !== id);
+      const updated = prev.filter((i) => i.id !== id);
+      onChange?.(updated.map((i) => i.file)); // ← APPEL onChange
+      return updated;
     });
   };
 
@@ -124,7 +132,6 @@ export const ImageUpload = ({
 
   return (
     <div className="flex flex-col gap-3 w-full">
-      {/* Drop zone — hidden when full */}
       {canAdd && (
         <div
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
@@ -172,7 +179,6 @@ export const ImageUpload = ({
         </div>
       )}
 
-      {/* Preview grid */}
       {images.length > 0 && (
         <div className={`grid gap-3 ${images.length === 1 ? "grid-cols-1" : images.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
           {images.map((img, i) => (
@@ -181,24 +187,17 @@ export const ImageUpload = ({
               className="group relative rounded-2xl overflow-hidden bg-slate-100 aspect-square"
               style={{ animationDelay: `${i * 60}ms` }}
             >
-              {/* Image */}
               <img
                 src={img.preview}
                 alt={img.file.name}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
-
-              {/* Overlay on hover */}
               <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-all duration-200 rounded-2xl" />
-
-              {/* File name chip */}
               <div className="absolute bottom-0 left-0 right-0 p-2 translate-y-full group-hover:translate-y-0 transition-transform duration-200">
                 <p className="text-[10px] font-semibold text-white truncate bg-slate-900/60 backdrop-blur-sm rounded-xl px-2 py-1">
                   {img.file.name}
                 </p>
               </div>
-
-              {/* Remove button */}
               <button
                 type="button"
                 onClick={() => remove(img.id)}
@@ -212,15 +211,12 @@ export const ImageUpload = ({
               >
                 <X size={14} strokeWidth={2.5} className="text-slate-700" />
               </button>
-
-              {/* Index badge */}
               <div className="absolute top-2 left-2 w-5 h-5 rounded-lg bg-slate-900/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <span className="text-[9px] font-bold text-white">{i + 1}</span>
               </div>
             </div>
           ))}
 
-          {/* Inline "add more" slot when grid has space */}
           {canAdd && images.length > 0 && (
             <button
               type="button"
@@ -252,9 +248,11 @@ interface PDFFile {
 export const PDFUpload = ({
   name,
   maxPDFs = 3,
+  onChange,
 }: {
   name?: string;
   maxPDFs?: number;
+  onChange?: (files: File[]) => void; // ← AJOUTÉ
 }) => {
   const [pdfs, setPdfs] = useState<PDFFile[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -280,13 +278,21 @@ export const PDFUpload = ({
         file,
         size: formatFileSize(file.size),
       }));
-      setPdfs((prev) => [...prev, ...newPDFs].slice(0, maxPDFs));
+      setPdfs((prev) => {
+        const updated = [...prev, ...newPDFs].slice(0, maxPDFs);
+        onChange?.(updated.map((p) => p.file)); // ← APPEL onChange
+        return updated;
+      });
     },
-    [pdfs.length, maxPDFs]
+    [pdfs.length, maxPDFs, onChange]
   );
 
   const remove = (id: string) => {
-    setPdfs((prev) => prev.filter((p) => p.id !== id));
+    setPdfs((prev) => {
+      const updated = prev.filter((p) => p.id !== id);
+      onChange?.(updated.map((p) => p.file)); // ← APPEL onChange
+      return updated;
+    });
   };
 
   const onDrop = (e: React.DragEvent) => {
@@ -299,7 +305,6 @@ export const PDFUpload = ({
 
   return (
     <div className="flex flex-col gap-3 w-full">
-      {/* Drop zone — hidden when full */}
       {canAdd && (
         <div
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
@@ -347,7 +352,6 @@ export const PDFUpload = ({
         </div>
       )}
 
-      {/* Preview list */}
       {pdfs.length > 0 && (
         <div className="flex flex-col gap-3">
           {pdfs.map((pdf, i) => (
@@ -357,12 +361,9 @@ export const PDFUpload = ({
               style={{ animationDelay: `${i * 60}ms` }}
             >
               <div className="flex items-center gap-4 p-4">
-                {/* PDF Icon */}
                 <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:shadow transition-all duration-200">
                   <FileText size={22} strokeWidth={2} className="text-red-500" />
                 </div>
-
-                {/* File info */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-slate-900 truncate">
                     {pdf.file.name}
@@ -373,13 +374,9 @@ export const PDFUpload = ({
                     <span className="text-xs text-slate-400">PDF</span>
                   </div>
                 </div>
-
-                {/* Index badge */}
                 <div className="flex-shrink-0 w-6 h-6 rounded-lg bg-slate-200 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity duration-200">
                   <span className="text-xs font-bold text-slate-600">{i + 1}</span>
                 </div>
-
-                {/* Remove button */}
                 <button
                   type="button"
                   onClick={() => remove(pdf.id)}
@@ -397,7 +394,6 @@ export const PDFUpload = ({
             </div>
           ))}
 
-          {/* Add more button */}
           {canAdd && pdfs.length > 0 && (
             <button
               type="button"
@@ -420,7 +416,7 @@ export const PDFUpload = ({
 };
 
 // ─── RICH TEXT EDITOR ─────────────────────────────────────────────────────────
-export const RichTextEditor = ({ label, placeholder, name }: any) => {
+export const RichTextEditor = ({ label, placeholder, name, defaultValue }: any) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const colorInputRef = useRef<HTMLInputElement>(null);
   const bgInputRef = useRef<HTMLInputElement>(null);
@@ -473,6 +469,7 @@ export const RichTextEditor = ({ label, placeholder, name }: any) => {
         <div 
           ref={editorRef}
           contentEditable 
+          dangerouslySetInnerHTML={defaultValue ? { __html: defaultValue } : undefined}
           className="w-full min-h-[180px] p-5 text-slate-700 outline-none bg-transparent prose prose-slate max-w-none leading-relaxed"
           onInput={(e) => {
             const hiddenInput = document.getElementById(`hidden-${name}`) as HTMLInputElement;

@@ -13,6 +13,7 @@ import {
   X, FileText, CheckCircle2, XCircle,
   AlertCircle, ChevronLeft, ChevronRight,
   PlusCircle, Copy, Check,
+  CalendarDays,
 } from "lucide-react";
 
 import { useProviderQuotes } from "@hooks/useProviderQuotes";
@@ -133,7 +134,7 @@ function QuotePreviewPanel({ quote, onClose }: { quote: Quote; onClose: () => vo
                   </div>
                 ),
               },
-              { label: "Ticket",    value: quote.ticket?.subject ?? quote.ticket?.title ?? `#${quote.ticket_id}` ?? "—" },
+              { label: "Ticket",    value: quote.ticket?.subject ?? quote.ticket?.title ?? `#${quote.ticket_id}` },
               { label: "Site",      value: quote.site?.nom ?? quote.site?.name ?? "—" },
               { label: "Montant HT",  value: formatCurrency(quote.amount_ht) },
               { label: `TVA (${quote.tax_rate ?? 18}%)`, value: formatCurrency(quote.tax_amount) },
@@ -292,10 +293,16 @@ export default function ProviderDevisPage() {
       type:  "textarea",
     },
     {
-      name:  "tax_rate",
-      label: "Taux TVA (%)",
+      name:  "unit_price",
+      label: "Prix unitaire",
       type:  "number",
     },
+    {
+      name:  "quantity",
+      label: "Quantité",
+      type:  "number",
+    },
+  
     {
       name:     "quote_pdf",
       label:    "Devis PDF",
@@ -371,7 +378,7 @@ export default function ProviderDevisPage() {
       header: "Ticket", key: "ticket",
       render: (_: any, row: Quote) => (
         <span className="text-xs text-slate-600 font-medium">
-          {row.ticket?.subject ?? row.ticket?.title ?? `#${row.ticket_id}` ?? "—"}
+         {row.ticket?.subject ?? row.ticket?.title ?? `#${row.ticket_id}`}
         </span>
       ),
     },

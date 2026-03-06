@@ -162,9 +162,11 @@ export default function ProviderTicketsPage() {
   // ── KPIs ──────────────────────────────────────────────────────────────────
   const kpis1 = [
     { label: "Coût moyen / ticket",  value: stats?.cout_moyen_par_ticket          ?? 0, isCurrency: true, delta: "", trend: "up" as const },
-    { label: "Total tickets",        value: stats?.nombre_total_tickets            ?? 0, delta: "",        trend: "up" as const },
-    { label: "Tickets en cours",     value: stats?.nombre_total_tickets_en_cours   ?? 0, delta: "",        trend: "up" as const },
-    { label: "Tickets clôturés",     value: stats?.nombre_total_tickets_clotures   ?? 0, delta: "",        trend: "up" as const },
+   // AVANt
+// APRÈS
+{ label: "Total tickets",    value: stats?.total    ?? 0, delta: "", trend: "up" as const },
+{ label: "Tickets en cours", value: stats?.en_cours ?? 0, delta: "", trend: "up" as const },
+{ label: "Tickets clôturés", value: stats?.clotures ?? 0, delta: "", trend: "up" as const },
   ];
   const kpis2 = [
     { label: "Tickets ce mois",      value: stats?.nombre_tickets_par_mois         ?? 0, delta: "", trend: "up" as const },

@@ -113,6 +113,8 @@ export interface CreateInvoicePayload {
   tax_amount?: number;
   amount_ttc?: number;
   comment?: string;
+  invoice_date?: string | null;
+  due_date?: string | null;
   pdf_file?: File;          // → champ "pdf_file" → stocké dans pdf_path
   attachments?: File[];     // → justificatifs multiples → invoices/attachments/
 }

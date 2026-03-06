@@ -622,7 +622,7 @@ export default function ProviderRapportsDetailPage() {
           title={`Modifier le rapport #${report.id}`}
           subtitle="Impossible de modifier un rapport déjà validé par le gestionnaire."
           fields={editFields}
-          defaultValues={{
+          initialValues={{
             intervention_type: report.intervention_type??"",
             result:            report.result??"",
             start_date:        report.start_date??"",

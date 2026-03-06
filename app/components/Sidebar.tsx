@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,7 +22,7 @@ import {
 
 interface MenuItem {
   label: string;
-  icon: JSX.Element;
+  icon: React.ReactElement; // ← FIXÉ : JSX.Element → React.ReactElement
   href?: string;
   subItems?: MenuItem[];
 }

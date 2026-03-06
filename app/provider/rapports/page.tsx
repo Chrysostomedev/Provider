@@ -596,7 +596,7 @@ export default function ProviderRapportsPage() {
           title={`Modifier le rapport #${selectedReport.id}`}
           subtitle="Les modifications sont impossibles après validation par le gestionnaire."
           fields={baseFields}
-          defaultValues={{
+          initialValues={{
             intervention_type: selectedReport.intervention_type??"",
             result:            selectedReport.result??"",
             start_date:        selectedReport.start_date??"",
